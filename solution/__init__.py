@@ -19,4 +19,4 @@ from .swiglu import patch_qwen2_mlp
 
 def apply():
     patch_qwen2_mlp()  # the example: works out of the box, does not count as your own kernel
-    patch_chunked_lm_head()  # A1 chunked head + A2 Triton CE, with PyTorch fallback
+    patch_chunked_lm_head()  # A1 chunking + A2 CE + A3 frozen-head GEMMs

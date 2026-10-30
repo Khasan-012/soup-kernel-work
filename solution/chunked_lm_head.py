@@ -1,4 +1,4 @@
-"""Chunked LM head and causal-LM loss (stage A1 + A2).
+"""Chunked LM head and causal-LM loss (stage A1 + A2 + A3).
 
 The unchunked step builds ``[batch, seq, vocab]`` logits, upcasts them to fp32
 and keeps another buffer of that shape for the cross-entropy.  With the task's
@@ -21,6 +21,9 @@ the argmax at once, and the backward pass rebuilds the softmax from the saved
 row maximum and shifted log-normalizer. The PyTorch path of A1 stays as the
 fallback for a CPU, an unsupported dtype or a non-contiguous tensor.
 
+Stage A3 sends the frozen head projection and its hidden-state gradient through
+``frozen_lm_head``. CE, the chunk boundary, metrics and Rewind stay unchanged.
+
 What differs from the unchunked step is the order of the final sum and the shape
 of each matmul, so the loss and the gradients agree with it to rounding, not bit
 for bit.  The per-token terms that TRL and Soup's rewind recorder read are
@@ -36,6 +39,8 @@ from typing import Any, Callable, Optional
 
 import triton
 import triton.language as tl
+
+from .frozen_lm_head import project_frozen_head
 
 IGNORE_INDEX = -100
 
@@ -300,7 +305,7 @@ def _chunk_terms(head: Callable[[Any], Any], piece: Any, target: Any, ignore_ind
     import torch
     import torch.nn.functional as functional
 
-    logits = head(piece)
+    logits = project_frozen_head(head, piece)
     if _TRITON_ENABLED and logits.is_cuda:
         flat = logits.reshape(-1, logits.shape[-1])
         # The chunk is a column slice of ``labels``, so this is a small copy;
