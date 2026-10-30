@@ -10,6 +10,13 @@ from solution.a3_sm75_validation import (
 @pytest.fixture(scope="module", autouse=True)
 def target():
     require_target()
+    torch.cuda.init()
+    with torch.enable_grad(), fp32_reference_mode():
+        warmup = torch.ones((2, 2), device="cuda:0", dtype=torch.float32, requires_grad=True)
+        # SquareBackward initializes CUDA on the autograd worker before its
+        # first cuBLAS backward call; a forward-only warmup cannot do that.
+        (warmup @ warmup.detach()).square().sum().backward()
+    torch.cuda.synchronize(0)
 
 
 @pytest.mark.parametrize("shape", [(1,1,1), (7,5,3), (15,7,7), (16,8,8),
