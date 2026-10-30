@@ -13,8 +13,10 @@ The rules in short (the README and the task statement have the full ones):
   settings and outputs; no other GPU, no background processes, no tricks with the measurement.
 """
 
+from .chunked_lm_head import patch_chunked_lm_head
 from .swiglu import patch_qwen2_mlp
 
 
 def apply():
     patch_qwen2_mlp()  # the example: works out of the box, does not count as your own kernel
+    patch_chunked_lm_head()  # A1 chunked head + A2 Triton CE, with PyTorch fallback
