@@ -15,8 +15,12 @@ The rules in short (the README and the task statement have the full ones):
 
 from .chunked_lm_head import patch_chunked_lm_head
 from .swiglu import patch_qwen2_mlp
+from .nf4_backward import patch_nf4_backward
+from .head_cast import patch_head_cast
 
 
 def apply():
     patch_qwen2_mlp()  # the example: works out of the box, does not count as your own kernel
-    patch_chunked_lm_head()  # A1 chunking + A2 CE + A3 frozen-head GEMMs
+    patch_head_cast()  # A4 casts + native head GEMMs, replacing the A3 experiment
+    patch_nf4_backward()  # A4 fused nested NF4 decode in actual backward
+    patch_chunked_lm_head()  # A1 chunking + A2 cross entropy

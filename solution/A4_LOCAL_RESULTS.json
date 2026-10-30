@@ -1,0 +1,260 @@
+{
+  "scope": "isolated operations, NOT training or contest share",
+  "environment": {
+    "torch": "2.10.0+cu128",
+    "triton": "3.9.0",
+    "device": "NVIDIA GeForce RTX 5070",
+    "capability": [
+      12,
+      0
+    ]
+  },
+  "NF4_1536x1536": {
+    "native": {
+      "median_ms": 0.08140800148248672,
+      "samples_ms": [
+        0.10000000149011612,
+        0.08140800148248672,
+        0.0727040022611618,
+        0.08150400221347809,
+        0.06937599927186966,
+        0.07673600316047668,
+        0.09132800251245499
+      ],
+      "extra_peak_allocated_MiB": 4.640625
+    },
+    "A4": {
+      "median_ms": 0.0549440011382103,
+      "samples_ms": [
+        0.07705599814653397,
+        0.06508799642324448,
+        0.057920001447200775,
+        0.0549440011382103,
+        0.0530879981815815,
+        0.05347200110554695,
+        0.052191998809576035
+      ],
+      "extra_peak_allocated_MiB": 4.5
+    }
+  },
+  "NF4_8960x1536": {
+    "native": {
+      "median_ms": 0.0997759997844696,
+      "samples_ms": [
+        0.10825599730014801,
+        0.10313600301742554,
+        0.0997759997844696,
+        0.09891200065612793,
+        0.10585600137710571,
+        0.09763199836015701,
+        0.09558399766683578
+      ],
+      "extra_peak_allocated_MiB": 27.0703125
+    },
+    "A4": {
+      "median_ms": 0.07340800017118454,
+      "samples_ms": [
+        0.07340800017118454,
+        0.1101439967751503,
+        0.08124800026416779,
+        0.07878399640321732,
+        0.06460800021886826,
+        0.06329599767923355,
+        0.0626240000128746
+      ],
+      "extra_peak_allocated_MiB": 26.25
+    }
+  },
+  "head_forward_backward": {
+    "A2_native": {
+      "median_ms": 10.043871879577637,
+      "samples_ms": [
+        9.770943641662598,
+        9.958208084106445,
+        10.317279815673828,
+        10.0513277053833,
+        9.96889591217041,
+        10.043871879577637,
+        10.156384468078613
+      ],
+      "extra_peak_allocated_MiB": 741.3759765625
+    },
+    "A4": {
+      "median_ms": 10.091551780700684,
+      "samples_ms": [
+        10.022303581237793,
+        10.267071723937988,
+        10.925663948059082,
+        10.091551780700684,
+        9.891103744506836,
+        9.885087966918945,
+        10.271295547485352
+      ],
+      "extra_peak_allocated_MiB": 741.3759765625
+    }
+  },
+  "isolated_head_A2_operators": [
+    {
+      "name": "aten::mm",
+      "shapes": [
+        [
+          512,
+          1536
+        ],
+        [
+          1536,
+          151936
+        ]
+      ],
+      "count": 1,
+      "self_gpu_us": 3488.8179999999993
+    },
+    {
+      "name": "_ZN7cutlass7Kernel2I64cutlass_80_tensorop_f16_s16816gemm_relu_f16_64x64_32x6_tn_align8EEvNT_6ParamsE",
+      "shapes": [],
+      "count": 1,
+      "self_gpu_us": 3488.8179999999993
+    },
+    {
+      "name": "aten::mm",
+      "shapes": [
+        [
+          512,
+          151936
+        ],
+        [
+          151936,
+          1536
+        ]
+      ],
+      "count": 1,
+      "self_gpu_us": 3418.5780000000013
+    },
+    {
+      "name": "_ZN7cutlass7Kernel2I64cutlass_80_tensorop_f16_s16816gemm_relu_f16_64x64_32x6_nn_align8EEvNT_6ParamsE",
+      "shapes": [],
+      "count": 1,
+      "self_gpu_us": 3418.2580000000016
+    },
+    {
+      "name": "aten::copy_",
+      "shapes": [
+        [
+          151936,
+          1536
+        ],
+        [
+          151936,
+          1536
+        ],
+        []
+      ],
+      "count": 1,
+      "self_gpu_us": 2564.7499999999995
+    },
+    {
+      "name": "Activity Buffer Request",
+      "shapes": [],
+      "count": 1,
+      "self_gpu_us": 2564.7499999999995
+    },
+    {
+      "name": "_ZN2at6native29vectorized_elementwise_kernelILi4EZNS0_24float16_copy_kernel_cudaERNS_18TensorIteratorBaseEEUlfE_St5arrayIPcLy2EEEEviT0_T1_",
+      "shapes": [],
+      "count": 1,
+      "self_gpu_us": 2564.7499999999995
+    },
+    {
+      "name": "aten::sum",
+      "shapes": [
+        [
+          4,
+          128,
+          151936
+        ],
+        []
+      ],
+      "count": 1,
+      "self_gpu_us": 249.82500000000073
+    },
+    {
+      "name": "_ZN2at6native13reduce_kernelILi512ELi1ENS0_8ReduceOpIN3c104HalfENS0_14func_wrapper_tIS4_ZNS0_11sum_functorIS4_fS4_EclERNS_14TensorIteratorEEUlffE_EEjS4_Li4ELi8EEEEEvT1_",
+      "shapes": [],
+      "count": 1,
+      "self_gpu_us": 249.21700000000055
+    },
+    {
+      "name": "aten::copy_",
+      "shapes": [
+        [
+          512,
+          151936
+        ],
+        [
+          512,
+          151936
+        ],
+        []
+      ],
+      "count": 1,
+      "self_gpu_us": 213.8889999999992
+    },
+    {
+      "name": "_ZN2at6native18elementwise_kernelILi128ELi4EZNS0_22gpu_kernel_impl_nocastIZZZNS0_23direct_copy_kernel_cudaERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE8_clEvEUlN3c104HalfEE_EEvS4_RKT_EUliE_EEviT1_",
+      "shapes": [],
+      "count": 1,
+      "self_gpu_us": 213.8889999999992
+    },
+    {
+      "name": "aten::copy_",
+      "shapes": [
+        [
+          4,
+          128,
+          1536
+        ],
+        [
+          4,
+          128,
+          1536
+        ],
+        []
+      ],
+      "count": 2,
+      "self_gpu_us": 17.53599999999824
+    },
+    {
+      "name": "_ZN2at6native18elementwise_kernelILi128ELi4EZNS0_22gpu_kernel_impl_nocastIZNS0_24float16_copy_kernel_cudaERNS_18TensorIteratorBaseEEUlfE_EEvS4_RKT_EUliE_EEviT1_",
+      "shapes": [],
+      "count": 1,
+      "self_gpu_us": 11.167999999999665
+    },
+    {
+      "name": "_ZN2at6native27unrolled_elementwise_kernelIZZZNS0_23direct_copy_kernel_cudaERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE5_clEvEUlfE_St5arrayIPcLy2EELi4E23TrivialOffsetCalculatorILi1EjESB_NS0_6memory12LoadWithCastILi1EEENSC_13StoreWithCastILi1EEEEEviT_T0_T2_T3_T4_T5_",
+      "shapes": [],
+      "count": 1,
+      "self_gpu_us": 6.367999999998574
+    },
+    {
+      "name": "Memset (Device)",
+      "shapes": [],
+      "count": 2,
+      "self_gpu_us": 0.9279999999998836
+    },
+    {
+      "name": "aten::fill_",
+      "shapes": [
+        [],
+        []
+      ],
+      "count": 1,
+      "self_gpu_us": 0.7040000000015425
+    },
+    {
+      "name": "_ZN2at6native29vectorized_elementwise_kernelILi4ENS0_11FillFunctorIN3c104HalfEEESt5arrayIPcLy1EEEEviT0_T1_",
+      "shapes": [],
+      "count": 1,
+      "self_gpu_us": 0.7040000000015425
+    }
+  ]
+}
